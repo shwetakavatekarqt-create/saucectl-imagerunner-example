@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Automation Report - Swag Labs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        header h1 {
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .summary-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+        .summary-card .value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+        }
+        .test-case {
+            background: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #667eea;
+        }
+        .test-case.pass {
+            border-left-color: #10b981;
+        }
+        .test-case.fail {
+            border-left-color: #ef4444;
+        }
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .test-id {
+            background: #f3f4f6;
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: #667eea;
+            font-size: 0.9em;
+        }
+        .test-name {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+            margin: 0 15px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .badge.pass {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .badge.fail {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        .badge.smoke {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        .badge.functional {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        .badge.regression {
+            background-color: #f3e8ff;
+            color: #6b21a8;
+        }
+        .test-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .detail-item {
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 6px;
+        }
+        .detail-label {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+        .detail-value {
+            color: #555;
+            line-height: 1.5;
+        }
+        .risk-high {
+            color: #ef4444;
+            font-weight: 600;
+        }
+        .risk-medium {
+            color: #f97316;
+            font-weight: 600;
+        }
+        .risk-low {
+            color: #10b981;
+            font-weight: 600;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        th {
+            background-color: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9em;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        tr:hover {
+            background-color: #f9fafb;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .status-pass {
+            color: #10b981;
+            font-weight: 600;
+        }
+        .status-fail {
+            color: #ef4444;
+            font-weight: 600;
+        }
+        .footer {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.9em;
+        }
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .metric {
+            text-align: center;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 6px;
+        }
+        .metric-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .metric-label {
+            color: #6b7280;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧪 Test Automation Report</h1>
+            <p>Swag Labs E-Commerce Application - Complete Automation Test Suite</p>
+        </header>
+
+        <div class="summary">
+            <div class="summary-card">
+                <h3>Total Test Cases</h3>
+                <div class="value">7</div>
+            </div>
+            <div class="summary-card">
+                <h3>Passed Tests</h3>
+                <div class="value" style="color: #10b981;">7</div>
+            </div>
+            <div class="summary-card">
+                <h3>Failed Tests</h3>
+                <div class="value" style="color: #ef4444;">0</div>
+            </div>
+            <div class="summary-card">
+                <h3>Pass Rate</h3>
+                <div class="value" style="color: #10b981;">100%</div>
+            </div>
+        </div>
+
+        <!-- Test Case 1 -->
+        <div class="test-case pass">
+            <div class="test-header">
+                <span class="test-id">TC_001</span>
+                <span class="test-name">Login with Valid Credentials</span>
+                <span class="badge pass">PASS</span>
+                <span class="badge smoke">SMOKE</span>
+            </div>
+            <div class="test-details">
+                <div class="detail-item">
+                    <div class="detail-label">User Flow</div>
+                    <div class="detail-value">Authentication & Login</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Framework</div>
+                    <div class="detail-value">Java + Selenium + TestNG</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Risk Level</div>
+                    <div class="detail-value"><span class="risk-high">CRITICAL</span></div>
+                </div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Observed Behavior</div>
+                <div class="detail-value">User successfully logs in with valid credentials (standard_user/secret_sauce) and is redirected to products page. Page title verified as 'Swag Labs'.</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Bugs/Inconsistencies</div>
+                <div class="detail-value">None</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Recommendations</div>
+                <div class="detail-value">Test multi-user login scenarios, SSO integration, credential encryption, password reset flow, remember-me functionality.</div>
+            </div>
+        </div>
+
+        <!-- Test Case 2 -->
+        <div class="test-case pass">
+            <div class="test-header">
+                <span class="test-id">TC_002</span>
+                <span class="test-name">Login with Invalid Credentials</span>
+                <span class="badge pass">PASS</span>
+                <span class="badge smoke">SMOKE</span>
+            </div>
+            <div class="test-details">
+                <div class="detail-item">
+                    <div class="detail-label">User Flow</div>
+                    <div class="detail-value">Authentication & Error Handling</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Framework</div>
+                    <div class="detail-value">Java + Selenium + TestNG</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Risk Level</div>
+                    <div class="detail-value"><span class="risk-high">HIGH</span></div>
+                </div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Observed Behavior</div>
+                <div class="detail-value">Error message 'Epic sadface' displayed correctly when invalid credentials entered. User remains on login page. Proper error handling confirmed.</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Bugs/Inconsistencies</div>
+                <div class="detail-value">None</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Recommendations</div>
+                <div class="detail-value">Test account lockout after failed attempts, SQL injection handling, XSS attempts, brute force resistance, rate limiting.</div>
+            </div>
+        </div>
+
+        <!-- Test Case 3 -->
+        <div class="test-case pass">
+            <div class="test-header">
+                <span class="test-id">TC_003</span>
+                <span class="test-name">Product Listing Validation</span>
+                <span class="badge pass">PASS</span>
+                <span class="badge functional">FUNCTIONAL</span>
+            </div>
+            <div class="test-details">
+                <div class="detail-item">
+                    <div class="detail-label">User Flow</div>
+                    <div class="detail-value">Product Discovery</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Framework</div>
+                    <div class="detail-value">Java + Selenium + TestNG</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Risk Level</div>
+                    <div class="detail-value"><span class="risk-high">HIGH</span></div>
+                </div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Observed Behavior</div>
+                <div class="detail-value">Products correctly displayed with all required elements (name, price, add-to-cart button). Multiple products visible and properly formatted. Each product has complete information.</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Bugs/Inconsistencies</div>
+                <div class="detail-value">None</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Recommendations</div>
+                <div class="detail-value">Test filtering, sorting, pagination, image loading, product details page, out-of-stock indicators, reviews, discount display.</div>
+            </div>
+        </div>
+
+        <!-- Test Case 4 -->
+        <div class="test-case pass">
+            <div class="test-header">
+                <span class="test-id">TC_004</span>
+                <span class="test-name">Add Products to Cart</span>
+                <span class="badge pass">PASS</span>
+                <span class="badge functional">FUNCTIONAL</span>
+            </div>
+            <div class="test-details">
+                <div class="detail-item">
+                    <div class="detail-label">User Flow</div>
+                    <div class="detail-value">Shopping Cart Management</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Framework</div>
+                    <div class="detail-value">Java + Selenium + TestNG</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Risk Level</div>
+                    <div class="detail-value"><span class="risk-high">CRITICAL</span></div>
+                </div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Observed Behavior</div>
+                <div class="detail-value">Products successfully added to cart. Cart badge updates correctly in real-time, incrementing from 0 to 1 to 2 as items are added.</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Bugs/Inconsistencies</div>
+                <div class="detail-value">None</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Recommendations</div>
+                <div class="detail-value">Test duplicate products, batch operations, session persistence, inventory checks, maximum limits, real-time updates.</div>
+            </div>
+        </div>
+
+        <!-- Test Case 5 -->
+        <div class="test-case pass">
+            <div class="test-header">
+                <span class="test-id">TC_005</span>
+                <span class="test-name">Cart Content Validation</span>
+                <span class="badge pass">PASS</span>
+                <span class="badge functional">FUNCTIONAL</span>
+            </div>
+            <div class="test-details">
+                <div class="detail-item">
+                    <div class="detail-label">User Flow</div>
+                    <div class="detail-value">Cart Verification</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Framework</div>
+                    <div class="detail-value">Java + Selenium + TestNG</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Risk Level</div>
+                    <div class="detail-value"><span class="risk-high">HIGH</span></div>
+                </div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Observed Behavior</div>
+                <div class="detail-value">Cart page displays all added products with correct names, prices, and quantities. Product details match exactly with what was added from the products page. Cart count is accurate.</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Bugs/Inconsistencies</div>
+                <div class="detail-value">None</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Recommendations</div>
+                <div class="detail-value">Test price calculations, tax, discounts, quantity changes, item removal, empty cart state, expiration, saved carts.</div>
+            </div>
+        </div>
+
+        <!-- Test Case 6 -->
+        <div class="test-case pass">
+            <div class="test-header">
+                <span class="test-id">TC_006</span>
+                <span class="test-name">Checkout Flow (Happy Path)</span>
+                <span class="badge pass">PASS</span>
+                <span class="badge functional">FUNCTIONAL</span>
+            </div>
+            <div class="test-details">
+                <div class="detail-item">
+                    <div class="detail-label">User Flow</div>
+                    <div class="detail-value">Checkout Process</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Framework</div>
+                    <div class="detail-value">Java + Selenium + TestNG</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Risk Level</div>
+                    <div class="detail-value"><span class="risk-high">CRITICAL</span></div>
+                </div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Observed Behavior</div>
+                <div class="detail-value">Complete checkout flow successful. User enters shipping information (First Name, Last Name, Zip Code), proceeds through checkout overview, and receives order confirmation with 'Thank you' message.</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Bugs/Inconsistencies</div>
+                <div class="detail-value">None</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Recommendations</div>
+                <div class="detail-value">Test payment processing, multiple payment methods, shipping options, coupon application, order summary accuracy, form validation.</div>
+            </div>
+        </div>
+
+        <!-- Test Case 7 -->
+        <div class="test-case pass">
+            <div class="test-header">
+                <span class="test-id">TC_007</span>
+                <span class="test-name">Logout</span>
+                <span class="badge pass">PASS</span>
+                <span class="badge functional">FUNCTIONAL</span>
+            </div>
+            <div class="test-details">
+                <div class="detail-item">
+                    <div class="detail-label">User Flow</div>
+                    <div class="detail-value">User Session Management</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Framework</div>
+                    <div class="detail-value">Java + Selenium + TestNG</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Risk Level</div>
+                    <div class="detail-value"><span class="risk-medium">MEDIUM</span></div>
+                </div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Observed Behavior</div>
+                <div class="detail-value">User successfully logs out. Application redirects to login page. Session is properly terminated. Login button is visible and functional.</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Bugs/Inconsistencies</div>
+                <div class="detail-value">None</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Recommendations</div>
+                <div class="detail-value">Test session timeout, concurrent sessions, back button behavior, storage cleanup, cache clearing, token revocation.</div>
+            </div>
+        </div>
+
+        <!-- Summary Table -->
+        <section style="margin-top: 40px;">
+            <h2 style="margin-bottom: 20px; color: #333;">Test Execution Summary</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Test ID</th>
+                        <th>Test Case Name</th>
+                        <th>User Flow</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Risk</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>TC_001</td>
+                        <td>Login with Valid Credentials</td>
+                        <td>Authentication</td>
+                        <td>Smoke</td>
+                        <td><span class="status-pass">✓ PASS</span></td>
+                        <td><span class="risk-high">CRITICAL</span></td>
+                    </tr>
+                    <tr>
+                        <td>TC_002</td>
+                        <td>Login with Invalid Credentials</td>
+                        <td>Error Handling</td>
+                        <td>Smoke</td>
+                        <td><span class="status-pass">✓ PASS</span></td>
+                        <td><span class="risk-high">HIGH</span></td>
+                    </tr>
+                    <tr>
+                        <td>TC_003</td>
+                        <td>Product Listing Validation</td>
+                        <td>Product Discovery</td>
+                        <td>Functional</td>
+                        <td><span class="status-pass">✓ PASS</span></td>
+                        <td><span class="risk-high">HIGH</span></td>
+                    </tr>
+                    <tr>
+                        <td>TC_004</td>
+                        <td>Add Products to Cart</td>
+                        <td>Cart Management</td>
+                        <td>Functional</td>
+                        <td><span class="status-pass">✓ PASS</span></td>
+                        <td><span class="risk-high">CRITICAL</span></td>
+                    </tr>
+                    <tr>
+                        <td>TC_005</td>
+                        <td>Cart Content Validation</td>
+                        <td>Cart Verification</td>
+                        <td>Functional</td>
+                        <td><span class="status-pass">✓ PASS</span></td>
+                        <td><span class="risk-high">HIGH</span></td>
+                    </tr>
+                    <tr>
+                        <td>TC_006</td>
+                        <td>Checkout Flow</td>
+                        <td>Checkout Process</td>
+                        <td>Functional</td>
+                        <td><span class="status-pass">✓ PASS</span></td>
+                        <td><span class="risk-high">CRITICAL</span></td>
+                    </tr>
+                    <tr>
+                        <td>TC_007</td>
+                        <td>Logout</td>
+                        <td>Session Management</td>
+                        <td>Functional</td>
+                        <td><span class="status-pass">✓ PASS</span></td>
+                        <td><span class="risk-medium">MEDIUM</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Metrics -->
+        <div class="metrics">
+            <div class="metric">
+                <div class="metric-value">7</div>
+                <div class="metric-label">Total Tests</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value" style="color: #10b981;">7</div>
+                <div class="metric-label">Passed</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value" style="color: #ef4444;">0</div>
+                <div class="metric-label">Failed</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value" style="color: #667eea;">100%</div>
+                <div class="metric-label">Pass Rate</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>
+                <strong>Test Automation Suite:</strong> Swag Labs E-Commerce Application<br>
+                <strong>Framework:</strong> Java + Selenium WebDriver + TestNG<br>
+                <strong>Test Date:</strong> 2026-09-28<br>
+                <strong>Status:</strong> ✓ Ready for Production<br>
+                <strong>Document Version:</strong> 1.0
+            </p>
+        </div>
+    </div>
+</body>
+</html>
